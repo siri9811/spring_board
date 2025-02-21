@@ -1,5 +1,6 @@
 package spring.community.post;
 
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,18 +23,18 @@ public class PostService {
   public PostDto getPost(Long postId) {
     return postRepository.findById(postId)
         .map(PostDto::createPostDto)
-        .orElse(null);
+        .orElseThrow(()-> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다 postId : " + postId));
   }
 
   public PostDto createPost(PostDto dto) {
-    Post post = new Post(dto.getTitle(), dto.getContent());
+    Post post = Post.createPost(dto);
     Post created = postRepository.save(post);
     return PostDto.createPostDto(created);
   }
 
   public PostDto updatePost(Long postId, PostDto dto) {
     Post target = postRepository.findById(postId)
-        .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다 postId : " + postId));
 
     target.patch(dto);
 
@@ -45,7 +46,7 @@ public class PostService {
 
   public void deletePost(Long postId) {
     Post target = postRepository.findById(postId)
-        .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        .orElseThrow(()-> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다 postId : " + postId));
     postRepository.delete(target);
   }
 }
