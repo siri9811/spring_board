@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
-  public String username;
-  public String password;
-  public String role = "ROLE_ADMIN";
+    public String email;
+    public String username;
+    public String password;
 }

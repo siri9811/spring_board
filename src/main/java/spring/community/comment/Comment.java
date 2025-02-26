@@ -5,41 +5,39 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import spring.community.post.Post;
 
 @Entity
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "post_id")
-  private Post post;
+    @Column
+    private Long postId;
 
-  @Column
-  private String content;
+    @Column
+    private String content;
 
-   public static Comment createComment(Post post, CommentDto dto) {
-    return new Comment(
-        dto.getId(),
-        post,
-        dto.getContent()
-    );
-  }
+    @Column
+    private String authorId;
 
-  public void patch(CommentDto dto) {
-    this.content = dto.getContent();
-  }
+    public static Comment createComment(Long postId, String content, String authorId) {
+        return new Comment(
+                null,
+                postId,
+                content,
+                authorId
+        );
+    }
+
+    public void patch(String content) {
+        this.content = content;
+    }
 }

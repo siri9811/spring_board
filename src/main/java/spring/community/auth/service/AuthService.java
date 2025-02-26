@@ -12,30 +12,33 @@ import spring.community.user.UserRepository;
 @RequiredArgsConstructor
 public class AuthService {
 
-  private final UserRepository userRepository;
-  private final BCryptPasswordEncoder bCryptPasswordEncoder;
-  private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JWTUtil jwtUtil;
 
-  public void Register(RegisterRequest registerRequest) {
+    public String Register(RegisterRequest registerRequest) {
 
-    if (userRepository.existsByUsername(registerRequest.getUsername())) {
-      return;
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        User data = User.createUser(
+                registerRequest.getEmail(),
+                registerRequest.getUsername(),
+                bCryptPasswordEncoder.encode(registerRequest.getPassword())
+        );
+
+        userRepository.save(data);
+
+        return jwtUtil.createJwt(data.getUsername(), data.getRoles(), 60 * 60 * 10L);
     }
 
-    User data = new User();
-    data.setUsername(registerRequest.getUsername());
-    data.setPassword(bCryptPasswordEncoder.encode(registerRequest.getPassword()));
-    data.setRole("ROLE_USER");
+    public String authenticate(String username, String password) {
+        User user = userRepository.findByUsername(username).orElseThrow();
+        if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            return jwtUtil.createJwt(user.getUsername(), user.getRoles(), 60 * 60 * 10L);
+        }
 
-    userRepository.save(data);
-
-  }
-
-  public String authenticate(String username, String password) {
-    User user = userRepository.findByUsername(username);
-    if (user != null && bCryptPasswordEncoder.matches(password, user.getPassword())) {
-      return jwtUtil.createJwt(user.getUsername(), user.getRole(), 900000L); //15분
+        throw new RuntimeException("Invalid username or password");
     }
-    throw new RuntimeException("Invalid username or password");
-  }
 }

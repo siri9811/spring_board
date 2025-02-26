@@ -4,38 +4,39 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import spring.community.exception.UserNotFoundException;
+import spring.community.user.data.UserRequest;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-  private final UserRepository userRepository;
-  private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-  public UserRequest getUser(String username) {
-    return userRepository.findById(username)
-        .map(UserRequest::createUserDto)
-        .orElseThrow(() -> new EntityNotFoundException("유저 정보가 존재하지 않습니다, email: " + username));
-  }
+    @Transactional(readOnly = true)
+    public UserRequest getUser(String username) {
+        return userRepository.findById(username)
+                .map(UserRequest::createUserDto)
+                .orElseThrow(() -> new UserNotFoundException());
+    }
 
-  public UserRequest updateUser(String username, UserRequest userRequest) {
+    @Transactional
+    public UserRequest updateUser(String username, UserRequest userRequest) {
+        User target = userRepository.findById(username)
+                .orElseThrow(() -> new EntityNotFoundException("유저 정보가 존재하지 않습니다, email: " + username));
 
-    User target = userRepository.findById(username)
-        .orElseThrow(() -> new EntityNotFoundException("유저 정보가 존재하지 않습니다, email: " + username));
+        target.changePassword(
+                bCryptPasswordEncoder.encode(userRequest.password())
+        ); // 비밀번호 변경
 
-    String hashedPassword = bCryptPasswordEncoder.encode(userRequest.getPassword()); // 비밀번호 해싱
-    target.setPassword(hashedPassword); // 해싱된 비밀번호로 설정
+        return UserRequest.createUserDto(target);
+    }
 
-    User update = userRepository.save(target);
-
-    return UserRequest.createUserDto(update);
-  }
-
-  public void deleteUser(String username) {
-    User target = userRepository.findById(username)
-        .orElseThrow(() -> new EntityNotFoundException("유저 정보가 존재하지 않습니다, username: " + username));
-    target.setDeleted(true);
-    userRepository.save(target);
-  }
-
-
+    @Transactional
+    public void deleteUser(String username) {
+        User target = userRepository.findById(username)
+                .orElseThrow(() -> new EntityNotFoundException("유저 정보가 존재하지 않습니다, username: " + username));
+        userRepository.delete(target);
+    }
 }

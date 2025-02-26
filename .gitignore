@@ -14,6 +14,10 @@ local.properties
 .loadpath
 .recommenders
 
+.idea/
+.idea/**
+
+
 # External tool builders
 .externalToolBuilders/
 
@@ -356,3 +360,5 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,git,java,maven,eclipse,intellij,gradle,netbeans,visualstudiocode
+
+.env

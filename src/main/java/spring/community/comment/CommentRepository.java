@@ -6,5 +6,19 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-  List<Comment> findByPostId(Long postId);
+    /**
+     * 게시글에 해당하는 댓글을 조회합니다.
+     *
+     * @param postId 게시글 id
+     * @return 댓글 목록
+     */
+    List<Comment> findByPostId(Long postId);
+
+    /**
+     * 유저가 작성한 댓글을을 조회합니다.
+     *
+     * @param authorId 작성자 id
+     * @return 댓글 목록
+     */
+    List<Comment> findByAuthorId(Long authorId);
 }

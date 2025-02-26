@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ResponseBody
 public class MainController {
 
-  @GetMapping("/main")
-  public String mainP() {
-    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    @GetMapping("/main")
+    public String mainP() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-    Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-    GrantedAuthority auth = iter.next();
-    String role = auth.getAuthority();
-    return "Main controller" + "username : " + username + "role" + role;
-  }
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
+        GrantedAuthority auth = iter.next();
+        String role = auth.getAuthority();
+        return "Main controller" + "username : " + username + "role" + role;
+    }
 }
