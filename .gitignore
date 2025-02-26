@@ -16,7 +16,7 @@ local.properties
 
 .idea/
 .idea/**
-
+application.yaml
 
 # External tool builders
 .externalToolBuilders/
