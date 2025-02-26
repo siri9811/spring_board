@@ -20,5 +20,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      * @param authorId 작성자 id
      * @return 댓글 목록
      */
-    List<Comment> findByAuthorId(Long authorId);
+    List<Comment> findByAuthorId(String authorId);
 }

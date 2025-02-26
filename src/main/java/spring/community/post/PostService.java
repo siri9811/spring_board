@@ -16,6 +16,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final ImageStorage imageStorage;
 
+    @Transactional(readOnly = true)
     public Page<Post> getAllPosts(
             Pageable pageable
     ) {
@@ -29,7 +30,7 @@ public class PostService {
     }
 
     @Transactional
-    public Post createPost(PostForm dto, String userId) {
+    public Post createPost(PostForm dto, String author) {
         String imageUrl = null;
         if (dto.getImage() != null) {
             imageUrl = imageStorage.uploadImage(dto.getImage());
@@ -38,7 +39,8 @@ public class PostService {
         return postRepository.save(
                 Post.createPost(
                         dto,
-                        imageUrl
+                        imageUrl,
+                    author
                 )
         );
     }

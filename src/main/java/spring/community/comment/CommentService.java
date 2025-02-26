@@ -12,18 +12,18 @@ import spring.community.post.PostRepository;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final PostRepository boardRepository;
+    private final PostRepository postRepository;
 
     public List<Comment> getCommentsByPostId(Long postId) {
         return commentRepository.findByPostId(postId);
     }
 
 
-    public CommentDto createComment(Long postId, CommentDto dto, String userId) {
-        Post post = boardRepository.findById(postId)
+    public CommentDto createComment(Long postId, CommentDto dto, String username) {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("게시물이 존재하지 않습니다: " + postId));
 
-        Comment comment = Comment.createComment(post, dto, userId);
+        Comment comment = Comment.createComment(postId, dto.getContent(), username);
         Comment create = commentRepository.save(comment);
 
 

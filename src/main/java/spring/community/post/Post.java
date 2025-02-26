@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.LastModifiedDate;
 import spring.community.post.data.PostForm;
 
 @Entity
@@ -39,16 +40,20 @@ public class Post {
     @Column
     private String author;
 
-    private Instant createdAt = Instant.now();
+    @Column(updatable = false)
+    private Instant createdAt;
 
-    private Instant updatedAt = Instant.now();
+    @LastModifiedDate
+    private Instant updatedAt;
 
-    public static Post createPost(PostForm dto, String imageUrl) {
+    public static Post createPost(PostForm dto, String imageUrl, String author) {
         return Post.builder()
-                .title(dto.getTitle())
-                .content(dto.getContent())
-                .imageUrl(imageUrl)
-                .build();
+            .title(dto.getTitle())
+            .content(dto.getContent())
+            .imageUrl(imageUrl)
+            .author(author)
+            .createdAt(Instant.now())
+            .build();
     }
 
     public void patch(PostForm dto) {

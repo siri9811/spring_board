@@ -29,8 +29,12 @@ public class PostResponse {
         PostResponse postResponse = new PostResponse();
         postResponse.setId(post.getId());
         postResponse.setTitle(post.getTitle());
+        UserSummaryProfile userSummaryProfile = new UserSummaryProfile();
+        userSummaryProfile.setUsername(post.getAuthor()); //
+        postResponse.setAuthor(userSummaryProfile);
         postResponse.setContent(post.getContent());
         postResponse.setImageUrl(post.getImageUrl());
+
         postResponse.setComments(comments);
         return postResponse;
     }

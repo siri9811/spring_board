@@ -13,12 +13,6 @@ import lombok.Setter;
 @Schema(description = "댓글 관리 DTO")
 public class CommentDto {
 
-    @Schema(description = "댓글 ID")
-    private Long id;
-
-    @JsonProperty("post_id")
-    @Schema(description = "댓글이 작성된 게시글 ID")
-    private Long postId;
 
     @Schema(description = "댓글 내용")
     @NotBlank(message = "내용을 입력해주세요")
@@ -27,8 +21,6 @@ public class CommentDto {
     public static CommentDto createDto(Comment comment) {
 
         return new CommentDto(
-                comment.getId(),
-                comment.getPost().getId(),
                 comment.getContent()
         );
     }

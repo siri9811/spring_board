@@ -18,8 +18,8 @@ public class AuthService {
 
     public String Register(RegisterRequest registerRequest) {
 
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            throw new RuntimeException("Username already exists");
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new RuntimeException("email already exists");
         }
 
         User data = User.createUser(
@@ -30,15 +30,15 @@ public class AuthService {
 
         userRepository.save(data);
 
-        return jwtUtil.createJwt(data.getUsername(), data.getRoles(), 60 * 60 * 10L);
+        return jwtUtil.createJwt(data.getEmail(), data.getRoles(), 60 * 60 * 10L);
     }
 
-    public String authenticate(String username, String password) {
-        User user = userRepository.findByUsername(username).orElseThrow();
+    public String authenticate(String email, String password) {
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("email not found"));
         if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            return jwtUtil.createJwt(user.getUsername(), user.getRoles(), 60 * 60 * 10L);
+            return jwtUtil.createJwt(user.getEmail(), user.getRoles(), 60 * 60 * 10L);
         }
 
-        throw new RuntimeException("Invalid username or password");
+        throw new RuntimeException("Invalid email or password");
     }
 }

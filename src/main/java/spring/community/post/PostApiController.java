@@ -9,8 +9,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -23,6 +29,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import spring.community.comment.CommentService;
@@ -41,6 +48,7 @@ import static spring.community.config.SwaggerConfig.BEARER_AUTH;
  * @author : hyunchul
  * @since : 2025-02-20
  */
+@Slf4j
 @Tag(name = "게시글 관리 API", description = "게시글 관리 API 엔드포인트")
 @RestController
 @RequiredArgsConstructor
@@ -60,8 +68,12 @@ public class PostApiController {
             content = @Content(schema = @Schema(implementation = PostForm.class))
     )
     public ResponseEntity<Page<PostSummaryResponse>> index(
-            @ModelAttribute Pageable pageable
+        @ParameterObject @PageableDefault(size = 20,
+            sort = "createdAt",
+            direction = Sort.Direction.DESC)
+        Pageable pageable
     ) {
+
         return ResponseEntity.ok(postService.getAllPosts(pageable).map(
                 PostSummaryResponse::from
         ));
@@ -88,19 +100,30 @@ public class PostApiController {
      * @param dto 작성할 게시글의 DTO
      * @return 생성된 게시글의 DTO
      */
-    @Operation(summary = "게시글 작성", description = "게시글을 작성합니다.")
-    @SecurityRequirement(name = BEARER_AUTH)
     @PostMapping(path = "/post", consumes = MULTIPART_FORM_DATA_VALUE)
+    @SecurityRequirement(name = BEARER_AUTH)
     @ResponseStatus(value = HttpStatus.CREATED)
+    @Operation(summary = "게시글 작성", description = "게시글을 작성합니다.")
     public ResponseEntity<PostResponse> createPost(
             @Valid @ModelAttribute PostForm dto,
             @AuthenticationPrincipal UserDetails userDetails
+
     ) {
-        Post post = postService.createPost(dto, userDetails.getUsername());
+        String username = userDetails.getUsername();
+        // 디버깅 로그 추가
+        if (userDetails == null) {
+            System.out.println("🔴 @AuthenticationPrincipal UserDetails is NULL!");
+        } else {
+            System.out.println("🟢 Authenticated User: " + username);
+        }
+
+        Post post = postService.createPost(dto, username);
+
         return ResponseEntity.ok(PostResponse.from(
                 post,
                 commentService.getCommentsByPostId(post.getId())
         ));
+
     }
 
     /**
@@ -110,14 +133,14 @@ public class PostApiController {
      * @param dto    수정할 게시글의 DTO
      * @return 수정된 게시글의 DTO
      */
+    @PatchMapping(path = "/post/{postId}", consumes = MULTIPART_FORM_DATA_VALUE)
     @Secured({"ROLE_USER"})
     @SecurityRequirement(name = BEARER_AUTH)
-    @PatchMapping(path = "/post/{postId}", consumes = MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "하나의 게시글 수정", description = "하나의 게시글을 수정합니다.")
     public ResponseEntity<PostResponse> update(
             @PathVariable Long postId,
-            @RequestBody @ModelAttribute PostForm dto,
-            @AuthenticationPrincipal Principal principal
+            @ModelAttribute PostForm dto,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         return ResponseEntity.ok(PostResponse.from(
                 postService.updatePost(postId, dto),
@@ -132,10 +155,12 @@ public class PostApiController {
      * @return HTTP 204(No content) 응답
      */
     @DeleteMapping("/post/{postId}")
+    @Secured({"ROLE_USER"})
+    @SecurityRequirement(name = BEARER_AUTH)
     @Operation(summary = "하나의 게시글 삭제", description = "하나의 게시글을 삭제합니다.")
     public ResponseEntity<Void> delete(
             @PathVariable Long postId,
-            @AuthenticationPrincipal Principal principal
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         postService.deletePost(postId);
         return ResponseEntity.noContent().build();

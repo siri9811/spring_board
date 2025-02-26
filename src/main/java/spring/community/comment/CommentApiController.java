@@ -1,7 +1,10 @@
 package spring.community.comment;
 
+import static spring.community.config.SwaggerConfig.BEARER_AUTH;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +40,9 @@ public class CommentApiController {
      * @return 작성된 댓글의 DTO
      */
     @PostMapping("/post/{postId}/comments")
-    @Operation(summary = "댓글 작성", description = "댓글을 작성합니다.")
+    @SecurityRequirement(name = BEARER_AUTH)
     @ApiResponse(responseCode = "200", description = "성공")
+    @Operation(summary = "댓글 작성", description = "댓글을 작성합니다.")
     public ResponseEntity<CommentDto> create(
             @PathVariable("postId") Long postId,
             @RequestBody CommentDto dto,
@@ -56,9 +60,14 @@ public class CommentApiController {
      * @return 수정된 댓글의 DTO
      */
     @PatchMapping("/comments/{commentId}")
-    @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
+    @SecurityRequirement(name = BEARER_AUTH)
     @ApiResponse(responseCode = "200", description = "성공")
-    public ResponseEntity<CommentDto> update(@PathVariable("commentId") Long commentId, @RequestBody CommentDto dto) {
+    @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
+    public ResponseEntity<CommentDto> update(
+        @PathVariable("commentId") Long commentId,
+        @RequestBody CommentDto dto,
+        @AuthenticationPrincipal UserDetails userDetails)
+    {
         CommentDto updateDto = commentService.updateComment(commentId, dto.getContent());
         return ResponseEntity.ok().body(updateDto);
     }
@@ -70,9 +79,12 @@ public class CommentApiController {
      * @return HTTP 204(No content) 응답
      */
     @DeleteMapping("/comments/{commentId}")
-    @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
+    @SecurityRequirement(name = BEARER_AUTH)
     @ApiResponse(responseCode = "204", description = "성공")
-    public ResponseEntity<Void> delete(@PathVariable("commentId") Long commentId) {
+    @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
+    public ResponseEntity<Void> delete(
+        @PathVariable("commentId") Long commentId,
+        @AuthenticationPrincipal UserDetails userDetails) {
         commentService.deleteComment(commentId);
         return ResponseEntity.noContent().build();
     }

@@ -21,8 +21,13 @@ public class PostSummaryResponse {
         PostSummaryResponse postResponse = new PostSummaryResponse();
         postResponse.setId(post.getId());
         postResponse.setTitle(post.getTitle());
-        postResponse.setContent(post.getContent().substring(0, 25));
-        postResponse.setImageUrl(post.getImageUrl());
+        String content = post.getContent();
+        // content의 길이에 따라 substring을 조절합니다.
+        if (content.length() <= 25) {
+            postResponse.setContent(content);
+        } else {
+            postResponse.setContent(content.substring(0, 25));
+        }        postResponse.setImageUrl(post.getImageUrl());
         return postResponse;
     }
 }

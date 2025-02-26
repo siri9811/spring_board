@@ -10,10 +10,10 @@ public interface UserRepository extends JpaRepository<User, String> {
     /**
      * username이 존재하는지 확인
      *
-     * @param username 사용하려는 username
+     * @param email 사용하려는 email
      * @return 존재하면 true, 존재하지 않으면 false
      */
-    Boolean existsByUsername(String username);
+    Boolean existsByEmail(String email);
 
-    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
 }
