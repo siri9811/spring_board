@@ -9,13 +9,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import spring.community.jwt.AuthenticatedUser;
 
 
 /**
@@ -46,9 +46,10 @@ public class CommentApiController {
     public ResponseEntity<CommentDto> create(
             @PathVariable("postId") Long postId,
             @RequestBody CommentDto dto,
-            @AuthenticationPrincipal UserDetails userDetails
+        @AuthenticationPrincipal AuthenticatedUser authenticatedUser
     ) {
-        CommentDto createDto = commentService.createComment(postId, dto, userDetails.getUsername());
+        String username = authenticatedUser.getEmail();
+        CommentDto createDto = commentService.createComment(postId, dto, username);
         return ResponseEntity.ok().body(createDto);
     }
 
@@ -66,7 +67,7 @@ public class CommentApiController {
     public ResponseEntity<CommentDto> update(
         @PathVariable("commentId") Long commentId,
         @RequestBody CommentDto dto,
-        @AuthenticationPrincipal UserDetails userDetails)
+        @AuthenticationPrincipal AuthenticatedUser authenticatedUser)
     {
         CommentDto updateDto = commentService.updateComment(commentId, dto.getContent());
         return ResponseEntity.ok().body(updateDto);
@@ -84,7 +85,7 @@ public class CommentApiController {
     @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
     public ResponseEntity<Void> delete(
         @PathVariable("commentId") Long commentId,
-        @AuthenticationPrincipal UserDetails userDetails) {
+        @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         commentService.deleteComment(commentId);
         return ResponseEntity.noContent().build();
     }

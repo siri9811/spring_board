@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.Data;
 import spring.community.comment.Comment;
 import spring.community.post.Post;
+import spring.community.user.User;
 import spring.community.user.data.UserSummaryProfile;
 
 @Data

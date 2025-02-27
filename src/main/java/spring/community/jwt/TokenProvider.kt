@@ -14,8 +14,8 @@ import java.util.Date
 
 @Component
 class TokenProvider(
-    private val jwtProperties: JwtProperties)
-{
+    private val jwtProperties: JwtProperties
+) {
     /**
      * JWT 키
      */
@@ -25,7 +25,7 @@ class TokenProvider(
     fun createToken(
         email: String,
         roles: Set<UserRole>,
-        expire: Long = jwtProperties.accessTokenExpiration
+        expire: Long = jwtProperties.accessTokenExpiration,
     ): String {
         return Jwts.builder()
             .claim("email", email)
@@ -38,22 +38,26 @@ class TokenProvider(
 
     fun decodeToken(token: String): AuthenticatedUser {
         try {
-            val claims: Claims = Jwts.parser()
+
+            val claims = Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .payload
 
+            // 나머지 코드는 동일
             return AuthenticatedUser(
-                userId = claims.subject,
-                roles = claims["roles", Collection::class.java]!!.map { UserRole.valueOf(it as String) }
-                    .toSet(),
+                email = claims["email", String::class.java]
+                    ?: throw InvalidTokenException("Email claim is missing"),
+                roles = claims["roles", Collection::class.java]?.map { UserRole.valueOf(it as String) }
+                    ?.toSet()
+                    ?: throw InvalidTokenException("Roles claim is missing"),
                 issuedAt = claims.issuedAt.toInstant(),
                 expiration = claims.expiration.toInstant()
             )
         } catch (e: Exception) {
-            throw InvalidTokenException("Invalid token")
+            println("Token decode error: ${e.message}")
+            throw InvalidTokenException("Invalid token: ${e.message}")
         }
     }
-
 }

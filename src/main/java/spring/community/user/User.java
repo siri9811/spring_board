@@ -26,6 +26,7 @@ public class User implements UserDetails {
     @Id
     private String email;
 
+    @Column
     private String username;
 
     @Column(nullable = false)
@@ -61,6 +62,26 @@ public class User implements UserDetails {
     @Override
     public Set<UserRole> getAuthorities() {
         return roles;
+    }
+
+      @Override
+    public boolean isAccountNonExpired() {
+        return true; // 계정 만료 여부
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // 계정 잠금 여부
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // 자격 증명 만료 여부
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // 계정 활성 여부
     }
 }
 

@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 
 class TokenAuthenticationFilter(
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProvider,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -21,7 +21,6 @@ class TokenAuthenticationFilter(
             val authentication: AuthenticatedUser = tokenProvider.decodeToken(token)
 
             //인증된 정보 SecurityContext에 저장
-            // AuthenticatedUser 객체를 Authentication 로 변환하기위해 UsernamePasswordAuthenticationToken 사용
             SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
                 authentication,
                 token,
