@@ -1,20 +1,25 @@
 spring:
   application:
-    name: Community
+    name: community
 
-  jwt:
-    secret: ${JWT_SECRET:your-secret-key}
+  datasource:
+    url: jdbc:mysql://localhost:3306/spring?serverTimezone=Asia/Seoul
+    username: root
+    password: qwer9811
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
 
-  servlet:
-    multipart:
-      max-file-size: 25MB
-      max-request-size: 25MB
+jwt:
+  secretKey: ${JWT_SECRET:your-jwt-key}
+  accesstokenexpiration: 1800 # 30 minutes
 
 imgbb:
-  secret: ${IMGBB_SECRET:your-secret-key}
+  secret: ${IMGBB_SECRET:your-imgbb-key}

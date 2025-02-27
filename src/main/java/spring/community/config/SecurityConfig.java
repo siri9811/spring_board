@@ -1,6 +1,7 @@
 package spring.community.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,15 +11,17 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import spring.community.jwt.JWTFilter;
-import spring.community.jwt.JWTUtil;
+import spring.community.jwt.JwtProperties;
 import spring.community.jwt.LoginFilter;
+import spring.community.jwt.TokenAuthenticationFilter;
+import spring.community.jwt.TokenProvider;
 
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties({JwtProperties.class})
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JWTUtil jwtUtil;
+    private final TokenProvider tokenProvider;
     private final UserDetailsService userDetailsService;
 
 
@@ -35,8 +38,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
                         .anyRequest().permitAll())
-                .addFilterBefore(new JWTFilter(jwtUtil, userDetailsService), LoginFilter.class)
-
+                .addFilterBefore(new TokenAuthenticationFilter(tokenProvider), LoginFilter.class)
                 .sessionManagement((session)
                         -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

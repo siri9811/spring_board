@@ -2,10 +2,10 @@ package spring.community.user;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.community.exception.UserNotFoundException;
 import spring.community.user.data.UserRequest;
 
 @Service
@@ -18,7 +18,7 @@ public class UserService {
     public UserRequest getUser(String username) {
         return userRepository.findById(username)
                 .map(UserRequest::createUserDto)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
     @Transactional

@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import spring.community.exception.DomainException.ForbiddenException;
+import spring.community.exception.DomainException.InvalidTokenException;
+import spring.community.exception.DomainException.NotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,6 +34,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(InvalidTokenException.class) // InvalidToken을 처리하는 핸들러
+    public ResponseEntity<Map<String, String>> handleInvalidTokenException(InvalidTokenException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+
+        errorResponse.put("error", "유효하지 않은 토큰입니다.");
+        errorResponse.put("message", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(errorResponse); // UNAUTHORIZED 상태 코드
+    }
     //  @ExceptionHandler(NoSuchElementException.class)
 //  public ResponseEntity<Map<String, String>> handleNotFound(NoSuchElementException ex) {
 //    Map<String, String> errorResponse = new HashMap<>();
@@ -51,8 +64,8 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
-    @ExceptionHandler(NotFountException.class)
-    public ResponseEntity<Map<String, String>> handleNotFound(NotFountException ex) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNotFound(NotFoundException ex) {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", "리소스를 찾을 수 없습니다.");
         errorResponse.put("message", ex.getMessage());
