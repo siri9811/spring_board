@@ -19,10 +19,7 @@ import spring.community.jwt.AuthenticatedUser;
 
 
 /**
- * 댓글을 관리하는 controller
- * 파일명 : CommentApiController
- *
- * @author : hyunchul
+ * 댓글 관리 컨트롤러
  * @since : 2025-02-21
  */
 @Tag(name = "CommentApiController", description = "댓글 관리 API 엔드포인트")
@@ -37,6 +34,7 @@ public class CommentApiController {
      *
      * @param postId 작성할 댓글의 게시글 ID
      * @param dto    작성할 댓글의 DTO
+     * @param authenticatedUser 유저 정보
      * @return 작성된 댓글의 DTO
      */
     @PostMapping("/post/{postId}/comments")

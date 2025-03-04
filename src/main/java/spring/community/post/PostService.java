@@ -1,7 +1,6 @@
 package spring.community.post;
 
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,13 +36,8 @@ public class PostService {
             imageUrl = imageStorage.uploadImage(dto.getImage());
         }
 
-        return postRepository.save(
-                Post.createPost(
-                        dto,
-                        imageUrl,
-                    author
-                )
-        );
+        Post post = Post.createPost(dto, imageUrl, author);
+        return postRepository.save(post);
     }
 
     @Transactional

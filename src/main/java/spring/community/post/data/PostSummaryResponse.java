@@ -5,6 +5,9 @@ import lombok.Data;
 import spring.community.post.Post;
 
 @Data
+/**
+ *  게시글 요약
+ */
 public class PostSummaryResponse {
     @Schema(description = "게시글 ID")
     private Long id;
@@ -16,6 +19,9 @@ public class PostSummaryResponse {
     private String content;
 
     private String imageUrl;
+
+    @Schema(description = "좋아요")
+    private Long likeCount;
 
     static public PostSummaryResponse from(Post post) {
         PostSummaryResponse postResponse = new PostSummaryResponse();

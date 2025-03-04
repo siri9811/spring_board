@@ -1,6 +1,5 @@
 package spring.community.Img
 
-import java.util.Base64
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -8,6 +7,7 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestClient
 import org.springframework.web.multipart.MultipartFile
+import java.util.*
 
 @Component
 class ImgBBStorageService(

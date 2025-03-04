@@ -1,6 +1,5 @@
 package spring.community.jwt
 
-import spring.community.user.User
 import spring.community.user.UserRole
 import java.time.Instant
 

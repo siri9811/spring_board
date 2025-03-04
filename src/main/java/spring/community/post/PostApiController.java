@@ -1,5 +1,8 @@
 package spring.community.post;
 
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import static spring.community.config.SwaggerConfig.BEARER_AUTH;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,9 +35,6 @@ import spring.community.post.data.PostForm;
 import spring.community.post.data.PostResponse;
 import spring.community.post.data.PostSummaryResponse;
 import spring.community.user.UserRepository;
-
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
-import static spring.community.config.SwaggerConfig.BEARER_AUTH;
 
 
 /**
@@ -86,11 +86,11 @@ public class PostApiController {
   public ResponseEntity<PostResponse> show(@PathVariable Long postId) {
     Post post = postService.getPost(postId);
 
-    return ResponseEntity.ok(PostResponse.from(
+    PostResponse postResponse= PostResponse.from(
         post,
-        commentService.getCommentsByPostId(postId),
-        userRepository.findByEmail(post.getAuthor()).orElseThrow()
-    ));
+        commentService.getCommentsByPostId(postId)
+    );
+    return ResponseEntity.ok(postResponse);
   }
 
   /**
@@ -103,7 +103,7 @@ public class PostApiController {
   @SecurityRequirement(name = BEARER_AUTH)
   @ResponseStatus(value = HttpStatus.CREATED)
   @Operation(summary = "게시글 작성", description = "게시글을 작성합니다.")
-  public ResponseEntity<PostResponse> createPost(
+  public ResponseEntity<Post> createPost(
       @Valid @ModelAttribute PostForm dto,
       @AuthenticationPrincipal AuthenticatedUser authenticatedUser
   ) {
@@ -115,9 +115,9 @@ public class PostApiController {
       System.out.println("🟢 Authenticated User: " + username);
     }
 
-    PostResponse postresponse = postService.createPost(dto, username);
+    Post post = postService.createPost(dto, username);
 
-    return ResponseEntity.ok(postresponse);
+    return ResponseEntity.ok(post);
 
   }
 
@@ -135,7 +135,7 @@ public class PostApiController {
     public ResponseEntity<PostResponse> update(
             @PathVariable Long postId,
             @ModelAttribute PostForm dto,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
     ) {
         return ResponseEntity.ok(PostResponse.from(
                 postService.updatePost(postId, dto),

@@ -5,10 +5,10 @@ import java.util.List;
 import lombok.Data;
 import spring.community.comment.Comment;
 import spring.community.post.Post;
-import spring.community.user.User;
 import spring.community.user.data.UserSummaryProfile;
 
 @Data
+
 public class PostResponse {
     @Schema(description = "게시글 ID")
     private Long id;

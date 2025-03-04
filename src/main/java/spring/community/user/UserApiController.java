@@ -1,5 +1,8 @@
 package spring.community.user;
 
+import static spring.community.config.SwaggerConfig.BEARER_AUTH;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spring.community.user.data.UserRequest;
 
-import static spring.community.config.SwaggerConfig.BEARER_AUTH;
-
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = BEARER_AUTH)
@@ -25,6 +26,8 @@ public class UserApiController {
     private final UserService userService;
 
     @GetMapping
+    @Operation(summary = "유저 정보 검색", description = "유저 정보를 검색합니다.")
+
     public ResponseEntity<UserRequest> getUserInfo(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
@@ -34,6 +37,7 @@ public class UserApiController {
 
     @PatchMapping
     @Secured("ROLE_USER")
+    @Operation(summary = "유저 정보 수정", description = "유저 정보를 수정합니다.")
     public ResponseEntity<UserRequest> updateUser(
             @RequestBody UserRequest userRequest,
             @AuthenticationPrincipal UserDetails userDetails
@@ -43,6 +47,7 @@ public class UserApiController {
     }
 
     @DeleteMapping
+    @Operation(summary = "유저 정보 삭제", description = "유저 정보를 삭제합니다.")
     public ResponseEntity<Void> delete(
             @AuthenticationPrincipal Principal principal
     ) {

@@ -1,15 +1,14 @@
 package spring.community.jwt
 
-import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.security.Keys
-import javax.crypto.SecretKey
 import io.jsonwebtoken.io.Decoders.BASE64
+import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Component
 import spring.community.exception.DomainException.InvalidTokenException
 import spring.community.user.UserRole
 import java.time.Instant
-import java.util.Date
+import java.util.*
+import javax.crypto.SecretKey
 
 
 @Component
@@ -36,6 +35,9 @@ class TokenProvider(
             .compact()
     }
 
+    /**
+     * JWT 토큰에서 정보 추출
+     */
     fun decodeToken(token: String): AuthenticatedUser {
         try {
 

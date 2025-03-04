@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+/**
+ *  댓글 엔티티
+ */
 public class Comment {
 
     @Id

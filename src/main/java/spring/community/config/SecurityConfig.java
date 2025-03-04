@@ -8,10 +8,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import spring.community.jwt.JwtProperties;
-import spring.community.jwt.LoginFilter;
 import spring.community.jwt.TokenAuthenticationFilter;
 import spring.community.jwt.TokenProvider;
 
@@ -37,7 +38,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
                         .anyRequest().permitAll())
-                .addFilterBefore(new TokenAuthenticationFilter(tokenProvider), LoginFilter.class)
+                .addFilterBefore(new TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session)
                         -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

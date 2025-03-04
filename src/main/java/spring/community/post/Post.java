@@ -7,12 +7,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.Instant;
+import kotlin.jvm.JvmField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import spring.community.post.data.PostForm;
@@ -24,6 +24,9 @@ import spring.community.post.data.PostForm;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+/**
+ *  게시글 엔티티
+ */
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +52,13 @@ public class Post {
 
     @LastModifiedDate
     private Instant updatedAt;
+
+    /**
+     * 좋아요 수
+     */
+    @Column
+    @JvmField
+    private Long likeCount = 0L;
 
     public static Post createPost(PostForm dto, String imageUrl, String author) {
         return Post.builder()

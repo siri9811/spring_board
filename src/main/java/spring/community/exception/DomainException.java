@@ -1,6 +1,9 @@
 package spring.community.exception;
 
 
+/**
+ * 예외처리 클래스
+ */
   public class DomainException extends RuntimeException {
 
     private final String errorCode;

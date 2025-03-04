@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import spring.community.auth.dto.RegisterRequest;
-import spring.community.jwt.TokenAuthenticationFilter;
 import spring.community.jwt.TokenProvider;
 import spring.community.user.User;
 import spring.community.user.UserRepository;
