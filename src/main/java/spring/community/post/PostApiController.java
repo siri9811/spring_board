@@ -61,7 +61,7 @@ public class PostApiController {
   @GetMapping("/post")
   @Operation(summary = "모든 게시글 조회", description = "모든 게시글을 조회합니다.")
   @ApiResponse(responseCode = "200", description = "성공",
-      content = @Content(schema = @Schema(implementation = PostForm.class))
+      content = @Content(schema = @Schema(implementation = PostSummaryResponse.class))
   )
   public ResponseEntity<Page<PostSummaryResponse>> index(
       @ParameterObject @PageableDefault(size = 20,

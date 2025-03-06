@@ -25,7 +25,7 @@ public class Comment {
     @Column
     private Long postId;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column

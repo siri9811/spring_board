@@ -8,7 +8,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.util.Set;
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +35,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false, unique = true)
+    private String phoneNumber;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(value = EnumType.STRING)
     private Set<UserRole> roles;
@@ -41,6 +47,7 @@ public class User implements UserDetails {
                 email,
                 username,
                 password,
+                UUID.randomUUID().toString(),
                 Set.of(UserRole.USER)
         );
     }
@@ -64,7 +71,7 @@ public class User implements UserDetails {
         return roles;
     }
 
-      @Override
+    @Override
     public boolean isAccountNonExpired() {
         return true; // 계정 만료 여부
     }

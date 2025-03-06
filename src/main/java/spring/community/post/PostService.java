@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.community.Img.ImageStorage;
+import spring.community.img.ImageStorage;
 import spring.community.post.data.PostForm;
 
 @Service
@@ -18,7 +18,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Page<Post> getAllPosts(
-            Pageable pageable
+        Pageable pageable
     ) {
         return postRepository.findAll(pageable);
     }
@@ -26,11 +26,14 @@ public class PostService {
 
     public Post getPost(Long postId) {
         return postRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다 postId : " + postId));
+            .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다 postId : " + postId));
     }
 
     @Transactional
-    public Post createPost(PostForm dto, String author) {
+    public Post createPost(
+        PostForm dto,
+        String author
+    ) {
         String imageUrl = null;
         if (dto.getImage() != null) {
             imageUrl = imageStorage.uploadImage(dto.getImage());
@@ -41,22 +44,25 @@ public class PostService {
     }
 
     @Transactional
-    public Post updatePost(Long postId, PostForm dto) {
+    public Post updatePost(
+        Long postId,
+        PostForm dto
+    ) {
         Post target = postRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다 postId : " + postId));
+            .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다 postId : " + postId));
 
         target.patch(dto);
 
-        if (dto.getImage() != null) {
-            target.setImageUrl(imageStorage.uploadImage(dto.getImage()));
-        }
+//        if (dto.getImage() != null) {
+//            target.setImageUrl(imageStorage.uploadImage(dto.getImage()));
+//        }
 
         return target;
     }
 
     public void deletePost(Long postId) {
         Post target = postRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다 postId : " + postId));
+            .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다 postId : " + postId));
         postRepository.delete(target);
     }
 }

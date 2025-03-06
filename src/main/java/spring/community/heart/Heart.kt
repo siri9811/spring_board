@@ -1,21 +1,30 @@
 package spring.community.heart
 
 import jakarta.persistence.*
+import java.time.Instant
 
 /**
  * 좋아요 엔티티
  */
 @Entity
-data class Heart (
+class Heart(
+    id: Long = 0L,
+    postId: Long,
+    userId: String,
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    val id: Long = id
 
     @Column
-    val postId: Long,
+    val postId: Long = postId
 
     @Column
-    val userId: String,
+    val userId: String = userId
 
 
-)
+    val createdAt: Instant = Instant.now()
+
+    var updatedAt: Instant = Instant.now()
+        protected set
+}

@@ -3,6 +3,7 @@ package spring.community.jwt
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders.BASE64
 import io.jsonwebtoken.security.Keys
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component
 import spring.community.exception.DomainException.InvalidTokenException
 import spring.community.user.UserRole
@@ -12,6 +13,7 @@ import javax.crypto.SecretKey
 
 
 @Component
+@EnableConfigurationProperties(JwtProperties::class)
 class TokenProvider(
     private val jwtProperties: JwtProperties
 ) {

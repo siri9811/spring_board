@@ -16,8 +16,7 @@ import spring.community.jwt.AuthenticatedUser
 @RequestMapping("/like")
 class HeartController(
     private val heartService: HeartService,
-)
-{
+) {
 
     /**
      * @param heartRequest 하트 DTO
@@ -35,7 +34,7 @@ class HeartController(
     ):
             ResponseEntity<Any> {
         val userId = authenticatedUser.email
-        val result = heartService.addlike(heartRequest, userId)
+        val result = heartService.addLike(heartRequest, userId)
         return ResponseEntity.ok(result)
     }
 
@@ -51,10 +50,17 @@ class HeartController(
     fun deleteLike(
         @PathVariable heartId: Long,
         @AuthenticationPrincipal authenticatedUser: AuthenticatedUser
-    ):
-            ResponseEntity<Any> {
-        heartService.removelike(heartId)
-        return ResponseEntity.noContent().build()
+    ): ResponseEntity<Any> {
+
+        val heart: Heart = Heart(
+            postId = 1L,
+            userId = authenticatedUser.email
+        )
+
+        val result = heartService.removelike(heartId)
+        return ResponseEntity.ok(result)
+
+
     }
 
 }

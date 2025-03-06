@@ -1,4 +1,4 @@
-package spring.community.Img;
+package spring.community.img;
 
 public class CommonExceptionCode {
 

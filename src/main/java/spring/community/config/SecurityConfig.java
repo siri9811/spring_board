@@ -18,7 +18,6 @@ import spring.community.jwt.TokenProvider;
 
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties({JwtProperties.class})
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final TokenProvider tokenProvider;

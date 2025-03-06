@@ -6,7 +6,9 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import java.time.Instant;
+
 import kotlin.jvm.JvmField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,10 +17,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import spring.community.heart.Heart;
 import spring.community.post.data.PostForm;
 
 @Entity
-@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,7 +37,7 @@ public class Post {
     @Column
     private String title;
 
-    @Column
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     @Column
@@ -57,23 +59,33 @@ public class Post {
      * 좋아요 수
      */
     @Column
-    @JvmField
-    private Long likeCount = 0L;
+    private Long likeCount;
 
     public static Post createPost(PostForm dto, String imageUrl, String author) {
+        var now = Instant.now();
         return Post.builder()
-            .title(dto.getTitle())
-            .content(dto.getContent())
-            .imageUrl(imageUrl)
-            .author(author)
-            .createdAt(Instant.now())
-            .build();
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .imageUrl(imageUrl)
+                .author(author)
+                .likeCount(0L)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 
     public void patch(PostForm dto) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
         this.updatedAt = Instant.now();
+    }
+
+    public void increaseLike() {
+        this.likeCount++;
+    }
+
+    public void decreaseLike() {
+        this.likeCount--;
     }
 }
 

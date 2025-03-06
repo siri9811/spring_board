@@ -28,6 +28,7 @@ public class PostSummaryResponse {
         postResponse.setId(post.getId());
         postResponse.setTitle(post.getTitle());
         String content = post.getContent();
+        postResponse.setLikeCount(post.getLikeCount());
         // content의 길이에 따라 substring을 조절합니다.
         if (content.length() <= 25) {
             postResponse.setContent(content);
